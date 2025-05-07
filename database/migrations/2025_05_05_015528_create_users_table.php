@@ -9,12 +9,14 @@ class CreateUsersTable extends Migration
     public function up()
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
+            $table->uuid('id')->primary();
+            $table->string('username');
             $table->string('email')->unique();
             $table->string('password');
+            $table->date('birth_date');
             $table->boolean('is_admin')->default(false);
-            $table->timestamps();
+            $table->string('forgot_password_token')->nullable();
+            $table->time('forgot_password_expired')->nullable();
         });
     }
 
