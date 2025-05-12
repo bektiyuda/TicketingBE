@@ -87,4 +87,23 @@ class TicketController extends Controller
             'data' => $ticket->load('concert')
         ]);
     }
+
+    public function destroy($id)
+    {
+        $ticket = Ticket::find($id);
+
+        if (!$ticket) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Ticket not found'
+            ], 404);
+        }
+
+        $ticket->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Ticket deleted successfully'
+        ]);
+    }
 }

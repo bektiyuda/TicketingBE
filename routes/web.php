@@ -33,4 +33,5 @@ $router->group(['prefix' => 'tickets'], function () use ($router) {
     $router->get('/{id}', 'TicketController@show');      
     $router->post('/', 'TicketController@store');        
     $router->put('/{id}', 'TicketController@update');    
+    $router->delete('/{id}', 'TicketController@destroy');
 });
