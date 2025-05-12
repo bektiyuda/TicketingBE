@@ -40,5 +40,6 @@ $router->group(['prefix' => 'orders'], function () use ($router) {
     $router->get('/', 'OrderDetailController@index');
     $router->get('/{id}', 'OrderDetailController@show');
     $router->post('/', 'OrderDetailController@store');
+    $router->put('/{id}', 'OrderDetailController@update');
 });
 

@@ -53,4 +53,29 @@ class OrderDetailController extends Controller
             'data' => $order->load('user')
         ], 201);
     }
+
+    public function update(Request $request, $id)
+    {
+        $order = OrderDetail::find($id);
+
+        if (!$order) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Order not found'
+            ], 404);
+        }
+
+        $this->validate($request, [
+            'user_id' => 'sometimes|exists:users,id',
+            'order_time' => 'sometimes|date',
+            'status' => 'sometimes|in:pending,paid,canceled'
+        ]);
+
+        $order->update($request->only(['user_id', 'order_time', 'status']));
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $order->load('user')
+        ]);
+    }
 }
