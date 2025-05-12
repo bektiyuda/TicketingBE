@@ -44,3 +44,6 @@ $router->group(['prefix' => 'orders'], function () use ($router) {
     $router->delete('/{id}', 'OrderDetailController@destroy');
 });
 
+$router->group(['prefix' => 'ticket-orders'], function () use ($router) {
+    $router->get('/', 'TicketOrderController@index');
+});
