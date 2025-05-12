@@ -27,3 +27,7 @@ $router->group(['prefix' => 'concerts'], function () use ($router) {
     $router->put('/{id}', 'ConcertController@update');      
     $router->delete('/{id}', 'ConcertController@destroy');  
 });
+
+$router->group(['prefix' => 'tickets'], function () use ($router) {
+    $router->get('/', 'TicketController@index');         
+});
