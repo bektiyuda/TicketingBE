@@ -33,4 +33,24 @@ class OrderDetailController extends Controller
             'data' => $order
         ]);
     }
+
+    public function store(Request $request)
+    {
+        $this->validate($request, [
+            'user_id' => 'required|exists:users,id',
+            'order_time' => 'required|date',
+            'status' => 'in:pending,paid,canceled'
+        ]);
+
+        $order = OrderDetail::create([
+            'user_id' => $request->user_id,
+            'order_time' => $request->order_time,
+            'status' => $request->status ?? 'pending'
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $order->load('user')
+        ], 201);
+    }
 }
