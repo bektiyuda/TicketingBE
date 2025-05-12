@@ -53,4 +53,29 @@ class TicketOrderController extends Controller
             'data' => $ticketOrder->load(['ticket', 'orderDetail'])
         ], 201);
     }
+
+    public function update(Request $request, $id)
+    {
+        $ticketOrder = TicketOrder::find($id);
+
+        if (!$ticketOrder) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Ticket order not found'
+            ], 404);
+        }
+
+        $this->validate($request, [
+            'ticket_id' => 'sometimes|exists:tickets,id',
+            'order_detail_id' => 'sometimes|exists:order_details,id',
+            'quantity' => 'sometimes|integer|min:1'
+        ]);
+
+        $ticketOrder->update($request->only(['ticket_id', 'order_detail_id', 'quantity']));
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $ticketOrder->load(['ticket', 'orderDetail'])
+        ]);
+    }
 }
