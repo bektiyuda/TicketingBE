@@ -52,4 +52,39 @@ class TicketController extends Controller
             'data' => $ticket->load('concert')
         ], 201);
     }
+
+    public function update(Request $request, $id)
+    {
+        $ticket = Ticket::find($id);
+
+        if (!$ticket) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Ticket not found'
+            ], 404);
+        }
+
+        $this->validate($request, [
+            'concert_id' => 'sometimes|exists:concerts,id',
+            'name' => 'sometimes|string',
+            'price' => 'sometimes|integer|min:0',
+            'quota' => 'sometimes|integer|min:1',
+            'sales_start' => 'sometimes|date',
+            'sales_end' => 'sometimes|date|after_or_equal:sales_start',
+        ]);
+
+        $ticket->update($request->only([
+            'concert_id',
+            'name',
+            'price',
+            'quota',
+            'sales_start',
+            'sales_end'
+        ]));
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $ticket->load('concert')
+        ]);
+    }
 }
