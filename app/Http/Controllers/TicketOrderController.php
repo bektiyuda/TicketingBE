@@ -33,4 +33,24 @@ class TicketOrderController extends Controller
             'data' => $ticketOrder
         ]);
     }
+
+    public function store(Request $request)
+    {
+        $this->validate($request, [
+            'ticket_id' => 'required|exists:tickets,id',
+            'order_detail_id' => 'required|exists:order_details,id',
+            'quantity' => 'required|integer|min:1'
+        ]);
+
+        $ticketOrder = TicketOrder::create([
+            'ticket_id' => $request->ticket_id,
+            'order_detail_id' => $request->order_detail_id,
+            'quantity' => $request->quantity
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $ticketOrder->load(['ticket', 'orderDetail'])
+        ], 201);
+    }
 }
