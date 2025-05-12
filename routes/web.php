@@ -46,4 +46,5 @@ $router->group(['prefix' => 'orders'], function () use ($router) {
 
 $router->group(['prefix' => 'ticket-orders'], function () use ($router) {
     $router->get('/', 'TicketOrderController@index');
+    $router->get('/{id}', 'TicketOrderController@show');
 });

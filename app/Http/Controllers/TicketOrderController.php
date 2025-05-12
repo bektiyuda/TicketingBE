@@ -16,4 +16,21 @@ class TicketOrderController extends Controller
             'data' => $ticketOrders
         ]);
     }
+
+    public function show($id)
+    {
+        $ticketOrder = TicketOrder::with(['ticket', 'orderDetail'])->find($id);
+
+        if (!$ticketOrder) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Ticket order not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $ticketOrder
+        ]);
+    }
 }
