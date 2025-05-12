@@ -78,4 +78,23 @@ class OrderDetailController extends Controller
             'data' => $order->load('user')
         ]);
     }
+
+    public function destroy($id)
+    {
+        $order = OrderDetail::find($id);
+
+        if (!$order) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Order not found'
+            ], 404);
+        }
+
+        $order->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Order deleted successfully'
+        ]);
+    }
 }
