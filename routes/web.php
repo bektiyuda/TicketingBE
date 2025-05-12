@@ -19,3 +19,11 @@ $router->get('/', function () use ($router) {
 
 $router->post('/register', 'AuthController@register');
 $router->post('/login', 'AuthController@login');
+
+$router->group(['prefix' => 'concerts'], function () use ($router) {
+    $router->get('/', 'ConcertController@index');           
+    $router->get('/{id}', 'ConcertController@show');        
+    $router->post('/', 'ConcertController@store');          
+    $router->put('/{id}', 'ConcertController@update');      
+    $router->delete('/{id}', 'ConcertController@destroy');  
+});
