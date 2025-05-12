@@ -78,4 +78,23 @@ class TicketOrderController extends Controller
             'data' => $ticketOrder->load(['ticket', 'orderDetail'])
         ]);
     }
+
+    public function destroy($id)
+    {
+        $ticketOrder = TicketOrder::find($id);
+
+        if (!$ticketOrder) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Ticket order not found'
+            ], 404);
+        }
+
+        $ticketOrder->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Ticket order deleted successfully'
+        ]);
+    }
 }
