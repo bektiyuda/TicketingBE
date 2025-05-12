@@ -33,4 +33,23 @@ class TicketController extends Controller
             'data' => $ticket
         ]);
     }
+
+    public function store(Request $request)
+    {
+        $this->validate($request, [
+            'concert_id' => 'required|exists:concerts,id',
+            'name' => 'required|string',
+            'price' => 'required|integer|min:0',
+            'quota' => 'required|integer|min:1',
+            'sales_start' => 'required|date',
+            'sales_end' => 'required|date|after_or_equal:sales_start',
+        ]);
+
+        $ticket = Ticket::create($request->all());
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $ticket->load('concert')
+        ], 201);
+    }
 }
