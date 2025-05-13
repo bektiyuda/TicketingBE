@@ -1,0 +1,100 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\OrderDetail;
+use Illuminate\Http\Request;
+
+class OrderDetailController extends Controller
+{
+    public function index()
+    {
+        $orders = OrderDetail::with(['user', 'ticketOrders'])->get();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $orders
+        ]);
+    }
+
+    public function show($id)
+    {
+        $order = OrderDetail::with(['user', 'ticketOrders'])->find($id);
+
+        if (!$order) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Order not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $order
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        $this->validate($request, [
+            'user_id' => 'required|exists:users,id',
+            'order_time' => 'required|date',
+            'status' => 'in:pending,paid,canceled'
+        ]);
+
+        $order = OrderDetail::create([
+            'user_id' => $request->user_id,
+            'order_time' => $request->order_time,
+            'status' => $request->status ?? 'pending'
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $order->load('user')
+        ], 201);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $order = OrderDetail::find($id);
+
+        if (!$order) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Order not found'
+            ], 404);
+        }
+
+        $this->validate($request, [
+            'user_id' => 'sometimes|exists:users,id',
+            'order_time' => 'sometimes|date',
+            'status' => 'sometimes|in:pending,paid,canceled'
+        ]);
+
+        $order->update($request->only(['user_id', 'order_time', 'status']));
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $order->load('user')
+        ]);
+    }
+
+    public function destroy($id)
+    {
+        $order = OrderDetail::find($id);
+
+        if (!$order) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Order not found'
+            ], 404);
+        }
+
+        $order->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Order deleted successfully'
+        ]);
+    }
+}

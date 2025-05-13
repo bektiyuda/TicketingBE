@@ -20,6 +20,39 @@ $router->get('/', function () use ($router) {
 $router->post('/register', 'AuthController@register');
 $router->post('/login', 'AuthController@login');
 
+
+$router->group(['prefix' => 'concerts'], function () use ($router) {
+    $router->get('/', 'ConcertController@index');           
+    $router->get('/{id}', 'ConcertController@show');        
+    $router->post('/', 'ConcertController@store');          
+    $router->put('/{id}', 'ConcertController@update');      
+    $router->delete('/{id}', 'ConcertController@destroy');  
+});
+
+$router->group(['prefix' => 'tickets'], function () use ($router) {
+    $router->get('/', 'TicketController@index');         
+    $router->get('/{id}', 'TicketController@show');      
+    $router->post('/', 'TicketController@store');        
+    $router->put('/{id}', 'TicketController@update');    
+    $router->delete('/{id}', 'TicketController@destroy');
+});
+
+$router->group(['prefix' => 'orders'], function () use ($router) {
+    $router->get('/', 'OrderDetailController@index');
+    $router->get('/{id}', 'OrderDetailController@show');
+    $router->post('/', 'OrderDetailController@store');
+    $router->put('/{id}', 'OrderDetailController@update');
+    $router->delete('/{id}', 'OrderDetailController@destroy');
+});
+
+$router->group(['prefix' => 'ticket-orders'], function () use ($router) {
+    $router->get('/', 'TicketOrderController@index');
+    $router->get('/{id}', 'TicketOrderController@show');
+    $router->post('/', 'TicketOrderController@store');
+    $router->put('/{id}', 'TicketOrderController@update');
+    $router->delete('/{id}', 'TicketOrderController@destroy');
+});
+
 // Route untuk genre
 $router->group(['prefix' => 'genres'], function () use ($router) {
     $router->get('/', 'GenreController@index');
@@ -46,3 +79,4 @@ $router->group(['prefix' => 'venues'], function () use ($router) {
     $router->put('/{id}', 'VenueController@update');
     $router->delete('/{id}', 'VenueController@destroy');
 });
+
