@@ -19,3 +19,30 @@ $router->get('/', function () use ($router) {
 
 $router->post('/register', 'AuthController@register');
 $router->post('/login', 'AuthController@login');
+
+// Route untuk genre
+$router->group(['prefix' => 'genres'], function () use ($router) {
+    $router->get('/', 'GenreController@index');
+    $router->get('/{id}', 'GenreController@show');
+    $router->post('/', 'GenreController@store');
+    $router->put('/{id}', 'GenreController@update');
+    $router->delete('/{id}', 'GenreController@destroy');
+});
+
+// Route untuk city
+$router->group(['prefix' => 'cities'], function () use ($router) {
+    $router->get('/', 'CityController@index');
+    $router->get('/{id}', 'CityController@show');
+    $router->post('/', 'CityController@store');
+    $router->put('/{id}', 'CityController@update');
+    $router->delete('/{id}', 'CityController@destroy');
+});
+
+// Route untuk venue
+$router->group(['prefix' => 'venues'], function () use ($router) {
+    $router->get('/', 'VenueController@index');
+    $router->get('/{id}', 'VenueController@show');
+    $router->post('/', 'VenueController@store');
+    $router->put('/{id}', 'VenueController@update');
+    $router->delete('/{id}', 'VenueController@destroy');
+});
