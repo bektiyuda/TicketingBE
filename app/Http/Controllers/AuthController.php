@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
@@ -60,5 +61,40 @@ class AuthController extends Controller
         $token = JWT::encode($payload, $this->key, 'HS256');
 
         return response()->json(['token' => $token]);
+    }
+
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')->stateless()->redirect();
+    }
+
+    public function handleGoogleCallback()
+    {
+        $googleUser = Socialite::driver('google')->stateless()->user();
+
+        $user = User::firstOrCreate(
+            ['email' => $googleUser->getEmail()],
+            [
+                'username' => $googleUser->getName(),
+                'password' => app('hash')->make(str()->random(10)),
+                'birth_date' => '2000-01-01', // dummy birth date
+                'is_admin' => false
+            ]
+        );
+        
+        $payload = [
+            'iss' => "lumen-jwt",
+            'sub' => $user->id,
+            'iat' => time(),
+            'exp' => time() + 60 * 60
+        ];
+
+        $token = JWT::encode($payload, $this->key, 'HS256');
+
+        return response()->json([
+            'message' => 'Google login successful',
+            'token' => $token,
+            'user' => $user
+        ]);
     }
 }

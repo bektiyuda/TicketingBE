@@ -80,3 +80,9 @@ $router->group(['prefix' => 'venues'], function () use ($router) {
     $router->delete('/{id}', 'VenueController@destroy');
 });
 
+// Route OAuth Google
+$router->get('/auth/redirect', 'AuthController@redirectToGoogle');
+$router->get('/auth/callback', 'AuthController@handleGoogleCallback');
+$router->get('/login-google', function () {
+    return view('oauth'); // resources/views/oauth.blade.php
+});
