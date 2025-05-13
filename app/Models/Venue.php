@@ -10,8 +10,8 @@ class Venue extends Model
     protected $fillable = [
         'name', 
         'city_id', 
-        'map_latitude', 
-        'map_longitude'
+        'latitude', 
+        'longitude'
     ];
     public $timestamps = false;
 
