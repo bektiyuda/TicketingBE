@@ -9,7 +9,8 @@
         "firebase/php-jwt": "^6.11",
         "guzzlehttp/guzzle": "^7.9",
         "laravel/lumen-framework": "^10.0",
-        "laravel/socialite": "^5.20"
+        "laravel/socialite": "^5.20",
+        "midtrans/midtrans-php": "^2.6"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

@@ -4,6 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\TicketOrder;
 use Illuminate\Http\Request;
+use App\Services\MidtransService;
+use Midtrans\Snap;
+use App\Models\OrderDetail;
+use App\Models\Ticket;
+use Carbon\Carbon;
+
 
 class TicketOrderController extends Controller
 {
@@ -35,24 +41,78 @@ class TicketOrderController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $this->validate($request, [
-            'ticket_id' => 'required|exists:tickets,id',
-            'order_detail_id' => 'required|exists:order_details,id',
-            'quantity' => 'required|integer|min:1'
+{
+    MidtransService::init();
+
+    $this->validate($request, [
+        'tickets' => 'required|array|min:1',
+        'tickets.*.ticket_id' => 'required|exists:tickets,id',
+        'tickets.*.quantity' => 'required|integer|min:1'
+    ]);
+
+    $user = $request->user;
+
+    // Buat order detail satu kali
+    $orderDetail = OrderDetail::create([
+        'user_id' => $user->id,
+        'order_time' => Carbon::now(),
+        'status' => 'pending',
+    ]);
+
+    $totalAmount = 0;
+
+    foreach ($request->tickets as $item) {
+        $ticket = Ticket::findOrFail($item['ticket_id']);
+
+        // Cek kuota
+        if ($item['quantity'] > $ticket->quota) {
+            return response()->json([
+                'message' => "Not enough quota for ticket ID {$ticket->id}"
+            ], 400);
+        }
+
+        // Buat ticket_order
+        TicketOrder::create([
+            'ticket_id' => $ticket->id,
+            'order_detail_id' => $orderDetail->id,
+            'quantity' => $item['quantity'],
         ]);
 
-        $ticketOrder = TicketOrder::create([
-            'ticket_id' => $request->ticket_id,
-            'order_detail_id' => $request->order_detail_id,
-            'quantity' => $request->quantity
-        ]);
+        // Kurangi kuota
+        $ticket->quota -= $item['quantity'];
+        $ticket->save();
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $ticketOrder->load(['ticket', 'orderDetail'])
-        ], 201);
+        // Tambahkan total harga
+        $totalAmount += $ticket->price * $item['quantity'];
     }
+
+    // Buat transaksi midtrans
+    $params = [
+        'transaction_details' => [
+            'order_id' => 'ORDER-' . $orderDetail->id,
+            'gross_amount' => $totalAmount,
+        ],
+        'customer_details' => [
+            'first_name' => $user->username,
+            'email' => $user->email,
+        ]
+    ];
+
+    $transaction = Snap::createTransaction($params);
+    $snapUrl = $transaction->redirect_url;
+
+    // Simpan ID transaksi
+    $orderDetail->transaction_id = $params['transaction_details']['order_id'];
+    $orderDetail->save();
+
+    return response()->json([
+        'message' => 'Order created',
+        'snap_url' => $snapUrl
+    ]);
+}
+
+
+
 
     public function update(Request $request, $id)
     {

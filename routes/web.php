@@ -22,18 +22,18 @@ $router->post('/login', 'AuthController@login');
 
 
 $router->group(['prefix' => 'concerts'], function () use ($router) {
-    $router->get('/', 'ConcertController@index');           
-    $router->get('/{id}', 'ConcertController@show');        
-    $router->post('/', 'ConcertController@store');          
-    $router->put('/{id}', 'ConcertController@update');      
-    $router->delete('/{id}', 'ConcertController@destroy');  
+    $router->get('/', 'ConcertController@index');
+    $router->get('/{id}', 'ConcertController@show');
+    $router->post('/', 'ConcertController@store');
+    $router->put('/{id}', 'ConcertController@update');
+    $router->delete('/{id}', 'ConcertController@destroy');
 });
 
 $router->group(['prefix' => 'tickets'], function () use ($router) {
-    $router->get('/', 'TicketController@index');         
-    $router->get('/{id}', 'TicketController@show');      
-    $router->post('/', 'TicketController@store');        
-    $router->put('/{id}', 'TicketController@update');    
+    $router->get('/', 'TicketController@index');
+    $router->get('/{id}', 'TicketController@show');
+    $router->post('/', 'TicketController@store');
+    $router->put('/{id}', 'TicketController@update');
     $router->delete('/{id}', 'TicketController@destroy');
 });
 
@@ -45,7 +45,7 @@ $router->group(['prefix' => 'orders'], function () use ($router) {
     $router->delete('/{id}', 'OrderDetailController@destroy');
 });
 
-$router->group(['prefix' => 'ticket-orders'], function () use ($router) {
+$router->group(['prefix' => 'ticket-orders', 'middleware' => 'auth'], function () use ($router) {
     $router->get('/', 'TicketOrderController@index');
     $router->get('/{id}', 'TicketOrderController@show');
     $router->post('/', 'TicketOrderController@store');

@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class TicketOrder extends Model
 {
+    public $timestamps = false;
+    
     protected $fillable = [
         'ticket_id',
         'order_detail_id',

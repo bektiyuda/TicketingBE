@@ -23,14 +23,10 @@ $app = new Laravel\Lumen\Application(
     dirname(__DIR__)
 );
 
-$app->configure('services');
-
 $app->withFacades();
 
 $app->withEloquent();
 
-$app->configure('view');
-$app->register(Illuminate\View\ViewServiceProvider::class);
 /*
 |--------------------------------------------------------------------------
 | Register Container Bindings
@@ -84,6 +80,12 @@ $app->configure('app');
 //     'auth' => App\Http\Middleware\Authenticate::class,
 // ]);
 
+$app->routeMiddleware([
+    'auth' => App\Http\Middleware\JwtMiddleware::class,
+    'admin' => App\Http\Middleware\AdminMiddleware::class,
+]);
+
+
 /*
 |--------------------------------------------------------------------------
 | Register Service Providers
@@ -99,7 +101,6 @@ $app->configure('app');
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 $app->register(Illuminate\Database\MigrationServiceProvider::class);
-$app->register(Laravel\Socialite\SocialiteServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------
