@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Concert;
 use App\Models\Genre;
 use Illuminate\Http\Request;
+use App\Services\SupabaseService;
 
 class ConcertController extends Controller
 {
@@ -65,7 +66,7 @@ class ConcertController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, SupabaseService $supabase)
     {
         $this->validate($request, [
             'name' => 'required|string',
@@ -73,10 +74,20 @@ class ConcertController extends Controller
             'concert_start' => 'required|date',
             'concert_end' => 'required|date',
             'venue_id' => 'required|integer',
-            'link_poster' => 'nullable|url',
-            'link_venue' => 'nullable|url',
+            'link_poster' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'link_venue' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'genre_ids' => 'required|array',
         ]);
+
+        $linkposter = null;
+        if ($request->hasFile('link_poster')) {
+            $linkPoster = $supabase->upload($request->file('link_poster'), 'posters');
+        }
+
+        $linkvenue = null;
+        if ($request->hasFile('link_venue')) {
+            $linkVenue = $supabase->upload($request->file('link_venue'), 'venues');
+        }
 
         $concert = Concert::create([
             'name' => $request->name,
@@ -84,8 +95,8 @@ class ConcertController extends Controller
             'concert_start' => $request->concert_start,
             'concert_end' => $request->concert_end,
             'venue_id' => $request->venue_id,
-            'link_poster' => $request->link_poster,
-            'link_venue' => $request->link_venue,
+            'link_poster' => $linkPoster,
+            'link_venue' => $linkVenue,
         ]);
 
         $concert->genres()->attach($request->genre_ids);
