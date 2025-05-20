@@ -8,9 +8,39 @@ use Illuminate\Http\Request;
 
 class ConcertController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $concerts = Concert::with(['genres', 'venue'])->get();
+        $query = Concert::with(['genres', 'venue.city', 'tickets']);
+
+        // Filter: Date Range
+        if ($request->has(['start_date', 'end_date'])) {
+            $query->whereBetween('concert_start', [$request->start_date, $request->end_date]);
+        }
+
+        // Filter: City
+        if ($request->has('city_id')) {
+            $query->whereHas('venue', function ($q) use ($request) {
+                $q->where('city_id', $request->city_id);
+            });
+        }
+
+        // Filter: Genre
+        if ($request->has('genre_ids')) {
+            $query->whereHas('genres', function ($q) use ($request) {
+                $q->whereIn('genres.id', $request->genre_ids);
+            });
+        }
+
+        // Filter: Price Range (dari relasi ticket)
+        if ($request->has(['min_price', 'max_price'])) {
+            $query->whereHas('tickets', function ($q) use ($request) {
+                $q->whereBetween('price', [$request->min_price, $request->max_price]);
+            });
+        }
+
+        // Pagination
+        $perPage = $request->get('limit', 10);
+        $concerts = $query->paginate($perPage);
 
         return response()->json([
             'status' => 'success',
