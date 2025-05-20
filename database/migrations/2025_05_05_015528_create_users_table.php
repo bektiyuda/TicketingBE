@@ -17,6 +17,7 @@ class CreateUsersTable extends Migration
             $table->boolean('is_admin')->default(false);
             $table->string('forgot_password_token')->nullable();
             $table->time('forgot_password_expired')->nullable();
+            $table->timestamps();
         });
     }
 

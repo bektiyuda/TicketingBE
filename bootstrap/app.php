@@ -23,10 +23,14 @@ $app = new Laravel\Lumen\Application(
     dirname(__DIR__)
 );
 
+$app->configure('services');
+
 $app->withFacades();
 
 $app->withEloquent();
 
+$app->configure('view');
+$app->register(Illuminate\View\ViewServiceProvider::class);
 /*
 |--------------------------------------------------------------------------
 | Register Container Bindings
@@ -95,6 +99,7 @@ $app->configure('app');
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 $app->register(Illuminate\Database\MigrationServiceProvider::class);
+$app->register(Laravel\Socialite\SocialiteServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------

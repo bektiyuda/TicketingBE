@@ -5,12 +5,43 @@ namespace App\Http\Controllers;
 use App\Models\Concert;
 use App\Models\Genre;
 use Illuminate\Http\Request;
+use App\Services\SupabaseService;
 
 class ConcertController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $concerts = Concert::with(['genres', 'venue'])->get();
+        $query = Concert::with(['genres', 'venue.city', 'tickets']);
+
+        // Filter: Date Range
+        if ($request->has(['start_date', 'end_date'])) {
+            $query->whereBetween('concert_start', [$request->start_date, $request->end_date]);
+        }
+
+        // Filter: City
+        if ($request->has('city_id')) {
+            $query->whereHas('venue', function ($q) use ($request) {
+                $q->where('city_id', $request->city_id);
+            });
+        }
+
+        // Filter: Genre
+        if ($request->has('genre_ids')) {
+            $query->whereHas('genres', function ($q) use ($request) {
+                $q->whereIn('genres.id', $request->genre_ids);
+            });
+        }
+
+        // Filter: Price Range (dari relasi ticket)
+        if ($request->has(['min_price', 'max_price'])) {
+            $query->whereHas('tickets', function ($q) use ($request) {
+                $q->whereBetween('price', [$request->min_price, $request->max_price]);
+            });
+        }
+
+        // Pagination
+        $perPage = $request->get('limit', 10);
+        $concerts = $query->paginate($perPage);
 
         return response()->json([
             'status' => 'success',
@@ -35,7 +66,7 @@ class ConcertController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, SupabaseService $supabase)
     {
         $this->validate($request, [
             'name' => 'required|string',
@@ -43,10 +74,20 @@ class ConcertController extends Controller
             'concert_start' => 'required|date',
             'concert_end' => 'required|date',
             'venue_id' => 'required|integer',
-            'link_poster' => 'nullable|url',
-            'link_venue' => 'nullable|url',
+            'link_poster' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'link_venue' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'genre_ids' => 'required|array',
         ]);
+
+        $linkposter = null;
+        if ($request->hasFile('link_poster')) {
+            $linkPoster = $supabase->upload($request->file('link_poster'), 'posters');
+        }
+
+        $linkvenue = null;
+        if ($request->hasFile('link_venue')) {
+            $linkVenue = $supabase->upload($request->file('link_venue'), 'venues');
+        }
 
         $concert = Concert::create([
             'name' => $request->name,
@@ -54,8 +95,8 @@ class ConcertController extends Controller
             'concert_start' => $request->concert_start,
             'concert_end' => $request->concert_end,
             'venue_id' => $request->venue_id,
-            'link_poster' => $request->link_poster,
-            'link_venue' => $request->link_venue,
+            'link_poster' => $linkPoster,
+            'link_venue' => $linkVenue,
         ]);
 
         $concert->genres()->attach($request->genre_ids);
