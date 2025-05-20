@@ -8,7 +8,7 @@ class AdminMiddleware
 {
     public function handle($request, Closure $next)
     {
-        $user = $request->auth;
+        $user = $request->user;
 
         if (!$user) {
             return response()->json(['message' => 'Unauthorized. Please login first.'], 401);
