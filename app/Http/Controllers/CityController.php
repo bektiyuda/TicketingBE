@@ -86,7 +86,8 @@ class CityController extends Controller
             ], 404);
         }
 
-        $city->venues()->detach();
+        $city->venues()->delete();
+
         $city->delete();
 
         return response()->json([

@@ -62,6 +62,8 @@ $router->group(['prefix' => 'genres'], function () use ($router) {
     $router->delete('/{id}', 'GenreController@destroy');
 });
 
+$router->post('/midtrans/callback', 'PaymentCallbackController@handle');
+
 // Route untuk city
 $router->group(['prefix' => 'cities'], function () use ($router) {
     $router->get('/', 'CityController@index');
@@ -84,5 +86,5 @@ $router->group(['prefix' => 'venues'], function () use ($router) {
 $router->get('/auth/redirect', 'AuthController@redirectToGoogle');
 $router->get('/auth/callback', 'AuthController@handleGoogleCallback');
 $router->get('/login-google', function () {
-    return view('oauth'); // resources/views/oauth.blade.php
+    return view('oauth'); 
 });
