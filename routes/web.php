@@ -47,6 +47,7 @@ $router->group(['prefix' => 'tickets', 'middleware' => ['auth', 'admin']], funct
 
 //Order Detail Route
 $router->group(['prefix' => 'orders', 'middleware' => ['auth']], function () use ($router) {
+    $router->get('/me', 'OrderDetailController@me');
     $router->get('/{id}', 'OrderDetailController@show');
 });
 
