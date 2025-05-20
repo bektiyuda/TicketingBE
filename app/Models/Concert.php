@@ -8,12 +8,12 @@ class Concert extends Model
 {
     protected $table = 'concerts';
     protected $fillable = [
-        'name', 
-        'description', 
-        'concert_start', 
+        'name',
+        'description',
+        'concert_start',
         'concert_end',
-        'venue_id', 
-        'link_poster', 
+        'venue_id',
+        'link_poster',
         'link_venue'
     ];
     public $timestamps = false;
@@ -26,5 +26,10 @@ class Concert extends Model
     public function genres()
     {
         return $this->belongsToMany(Genre::class, 'concert_genres', 'concert_id', 'genre_id');
+    }
+
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class);
     }
 }
