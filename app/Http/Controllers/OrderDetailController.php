@@ -17,6 +17,21 @@ class OrderDetailController extends Controller
         ]);
     }
 
+    public function me(Request $request)
+{
+    $user = $request->user;
+
+    $orders = OrderDetail::with(['ticketOrders.ticket'])
+        ->where('user_id', $user->id)
+        ->get();
+
+    return response()->json([
+        'status' => 'success',
+        'data' => $orders
+    ]);
+}
+
+
     public function show($id)
     {
         $order = OrderDetail::with(['user', 'ticketOrders'])->find($id);

@@ -4,6 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\TicketOrder;
 use Illuminate\Http\Request;
+use App\Services\MidtransService;
+use Midtrans\Snap;
+use App\Models\OrderDetail;
+use App\Models\Ticket;
+use Carbon\Carbon;
+
 
 class TicketOrderController extends Controller
 {
@@ -36,23 +42,75 @@ class TicketOrderController extends Controller
 
     public function store(Request $request)
     {
+        MidtransService::init();
+
         $this->validate($request, [
-            'ticket_id' => 'required|exists:tickets,id',
-            'order_detail_id' => 'required|exists:order_details,id',
-            'quantity' => 'required|integer|min:1'
+            'tickets' => 'required|array|min:1',
+            'tickets.*.ticket_id' => 'required|exists:tickets,id',
+            'tickets.*.quantity' => 'required|integer|min:1'
         ]);
 
-        $ticketOrder = TicketOrder::create([
-            'ticket_id' => $request->ticket_id,
-            'order_detail_id' => $request->order_detail_id,
-            'quantity' => $request->quantity
+        $user = $request->user;
+
+        $orderDetail = OrderDetail::create([
+            'user_id' => $user->id,
+            'order_time' => Carbon::now(),
+            'status' => 'pending',
         ]);
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $ticketOrder->load(['ticket', 'orderDetail'])
-        ], 201);
+        $totalAmount = 0;
+
+        foreach ($request->tickets as $item) {
+            $ticket = Ticket::findOrFail($item['ticket_id']);
+
+            if ($item['quantity'] > $ticket->quota) {
+                return response()->json([
+                    'message' => "Not enough quota for ticket ID {$ticket->id}"
+                ], 400);
+            }
+
+            TicketOrder::create([
+                'ticket_id' => $ticket->id,
+                'order_detail_id' => $orderDetail->id,
+                'quantity' => $item['quantity'],
+            ]);
+
+            $ticket->quota -= $item['quantity'];
+            $ticket->save();
+
+            $totalAmount += $ticket->price * $item['quantity'];
+        }
+
+        $params = [
+            'transaction_details' => [
+                'order_id' => 'ORDER-' . $orderDetail->id,
+                'gross_amount' => $totalAmount,
+            ],
+            'customer_details' => [
+                'first_name' => $user->username,
+                'email' => $user->email,
+            ],
+        ];
+
+        try {
+            $transaction = Snap::createTransaction($params);
+            $snapUrl = $transaction->redirect_url;
+
+            $orderDetail->transaction_id = $params['transaction_details']['order_id'];
+            $orderDetail->save();
+
+            return response()->json([
+                'message' => 'Order created',
+                'snap_url' => $snapUrl
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to create transaction',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
+
 
     public function update(Request $request, $id)
     {
