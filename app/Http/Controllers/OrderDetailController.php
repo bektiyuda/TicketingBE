@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\OrderDetail;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class OrderDetailController extends Controller
 {
@@ -20,10 +21,23 @@ class OrderDetailController extends Controller
     public function me(Request $request)
     {
         $user = $request->user;
+        $now = Carbon::now();
 
-        $orders = OrderDetail::with(['ticketOrders.ticket'])
-            ->where('user_id', $user->id)
-            ->get();
+        $orders = OrderDetail::with(['ticketOrders.ticket.concert'])
+            ->where('user_id', $user->id);
+
+        if ($request->has('past')) {
+            $isPast = $request->query('past');
+            $orders = $orders->whereHas('ticketOrders.ticket.concert', function ($query) use ($isPast, $now) {
+                if ($isPast == 1) {
+                    $query->where('concert_end', '<', $now);
+                } else {
+                    $query->where('concert_end', '>=', $now);
+                }
+            });
+        }
+
+        $orders = $orders->get();
 
         return response()->json([
             'status' => 'success',
