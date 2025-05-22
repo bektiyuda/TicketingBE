@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Concert;
-use App\Models\Genre;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Services\SupabaseService;
 use Carbon\Carbon;
@@ -48,6 +48,13 @@ class ConcertController extends Controller
         if ($request->has("upcoming") && $request->upcoming == 1) {
             $nextYear = Carbon::now()->addYear()->year;
             $query->whereYear('concert_start', $nextYear);
+        }
+
+        if ($request->has('trending') && $request->trending == 1) {
+            $query->withCount(['tickets as total_sold' => function ($q) {
+                $q->join('ticket_orders', 'tickets.id', '=', 'ticket_orders.ticket_id')
+                    ->select(DB::raw('SUM(ticket_orders.quantity)'));
+            }])->orderByDesc('total_sold');
         }
 
         // Pagination
