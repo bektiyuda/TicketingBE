@@ -158,32 +158,89 @@ class TicketsTableSeeder extends Seeder
         $concerts = DB::table('concerts')->pluck('id', 'name');
 
         $tickets = [
-            ['concert' => 'Synchronize Fest 2024', 'name' => 'General', 'price' => 150000, 'quota' => 500],
-            ['concert' => 'We The Fest', 'name' => 'VIP', 'price' => 750000, 'quota' => 200],
-            ['concert' => 'Jazz Gunung Bromo', 'name' => 'Reguler', 'price' => 300000, 'quota' => 150],
-            ['concert' => 'DCDC Rock Adventure', 'name' => 'Rockzone', 'price' => 250000, 'quota' => 400],
-            ['concert' => 'Emo Night Jakarta', 'name' => 'Early Bird', 'price' => 100000, 'quota' => 100],
-            ['concert' => 'Soundrenaline 2024', 'name' => 'Festival Pass', 'price' => 180000, 'quota' => 300],
-            ['concert' => 'LaLaLa Festival', 'name' => 'VIP', 'price' => 650000, 'quota' => 150],
-            ['concert' => 'Reggae Rise Up', 'name' => 'Sunset Entry', 'price' => 120000, 'quota' => 200],
-            ['concert' => 'Java Hip-Hop Day', 'name' => 'Standard', 'price' => 100000, 'quota' => 250],
-            ['concert' => 'Indieground Malang', 'name' => 'Indie Pass', 'price' => 150000, 'quota' => 300],
-            ['concert' => 'Rock in Semarang', 'name' => 'Moshpit', 'price' => 220000, 'quota' => 350],
-            ['concert' => 'Metal Storm', 'name' => 'Hellzone', 'price' => 275000, 'quota' => 200],
-            ['concert' => 'Emo Revival Tour', 'name' => 'Nostalgia', 'price' => 140000, 'quota' => 180],
-            ['concert' => 'RnB Session', 'name' => 'Sweet Seat', 'price' => 160000, 'quota' => 120],
-            ['concert' => 'Makassar Jazz Fest', 'name' => 'Lounge', 'price' => 300000, 'quota' => 100],
+            'Synchronize Fest 2024' => [
+                ['name' => 'General', 'price' => 150000, 'quota' => 500],
+                ['name' => 'VIP', 'price' => 300000, 'quota' => 200],
+                ['name' => 'VVIP', 'price' => 500000, 'quota' => 100],
+            ],
+            'We The Fest' => [
+                ['name' => 'Early Bird', 'price' => 200000, 'quota' => 300],
+                ['name' => 'VIP', 'price' => 750000, 'quota' => 150],
+            ],
+            'Jazz Gunung Bromo' => [
+                ['name' => 'Regular', 'price' => 250000, 'quota' => 100],
+                ['name' => 'Premium', 'price' => 400000, 'quota' => 50],
+                ['name' => 'VVIP', 'price' => 800000, 'quota' => 20],
+            ],
+            'DCDC Rock Adventure' => [
+                ['name' => 'Rockzone', 'price' => 250000, 'quota' => 400],
+                ['name' => 'Backstage Pass', 'price' => 500000, 'quota' => 50],
+                ['name' => 'VIP Lounge', 'price' => 1000000, 'quota' => 20],
+                ['name' => 'Moshpit', 'price' => 300000, 'quota' => 200],
+            ],
+            'Emo Night Jakarta' => [
+                ['name' => 'Early Bird', 'price' => 100000, 'quota' => 100],
+                ['name' => 'General Admission', 'price' => 200000, 'quota' => 200],
+            ],
+            'Soundrenaline 2024' => [
+                ['name' => 'Festival Pass', 'price' => 180000, 'quota' => 300],
+                ['name' => 'Super VIP', 'price' => 500000, 'quota' => 100],
+            ],
+            'LaLaLa Festival' => [
+                ['name' => 'Regular', 'price' => 220000, 'quota' => 300],
+                ['name' => 'VIP', 'price' => 650000, 'quota' => 150],
+            ],
+            'Reggae Rise Up' => [
+                ['name' => 'Sunset Entry', 'price' => 120000, 'quota' => 200],
+                ['name' => 'Full Day', 'price' => 200000, 'quota' => 100],
+                ['name' => 'VIP', 'price' => 400000, 'quota' => 50],
+            ],
+            'Java Hip-Hop Day' => [
+                ['name' => 'Standard', 'price' => 100000, 'quota' => 250],
+                ['name' => 'Meet & Greet', 'price' => 300000, 'quota' => 50],
+            ],
+            'Indieground Malang' => [
+                ['name' => 'Indie Pass', 'price' => 150000, 'quota' => 300],
+                ['name' => 'VIP Lounge', 'price' => 350000, 'quota' => 80],
+            ],
+            'Rock in Semarang' => [
+                ['name' => 'Moshpit', 'price' => 220000, 'quota' => 350],
+                ['name' => 'Balcony View', 'price' => 400000, 'quota' => 60],
+            ],
+            'Metal Storm' => [
+                ['name' => 'Hellzone', 'price' => 275000, 'quota' => 200],
+                ['name' => 'Meet the Band', 'price' => 500000, 'quota' => 30],
+            ],
+            'Emo Revival Tour' => [
+                ['name' => 'Nostalgia', 'price' => 140000, 'quota' => 180],
+                ['name' => 'Premium', 'price' => 280000, 'quota' => 90],
+            ],
+            'RnB Session' => [
+                ['name' => 'Sweet Seat', 'price' => 160000, 'quota' => 120],
+                ['name' => 'VIP Sofa', 'price' => 350000, 'quota' => 60],
+                ['name' => 'VVIP Table', 'price' => 600000, 'quota' => 30],
+            ],
+            'Makassar Jazz Fest' => [
+                ['name' => 'Lounge', 'price' => 300000, 'quota' => 100],
+                ['name' => 'Regular', 'price' => 180000, 'quota' => 200],
+            ],
         ];
 
-        foreach ($tickets as $ticket) {
-            DB::table('tickets')->insert([
-                'concert_id' => $concerts[$ticket['concert']],
-                'name' => $ticket['name'],
-                'price' => $ticket['price'],
-                'quota' => $ticket['quota'],
-                'sales_start' => Carbon::now()->subDays(10),
-                'sales_end' => Carbon::now()->addDays(30),
-            ]);
+        foreach ($tickets as $concertName => $ticketOptions) {
+            $concertId = $concerts[$concertName] ?? null;
+
+            if ($concertId) {
+                foreach ($ticketOptions as $ticket) {
+                    DB::table('tickets')->insert([
+                        'concert_id' => $concertId,
+                        'name' => $ticket['name'],
+                        'price' => $ticket['price'],
+                        'quota' => $ticket['quota'],
+                        'sales_start' => Carbon::now()->subDays(10),
+                        'sales_end' => Carbon::now()->addDays(30),
+                    ]);
+                }
+            }
         }
     }
 }
