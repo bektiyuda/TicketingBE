@@ -25,6 +25,11 @@ class ConcertController extends Controller
             });
         }
 
+        $limit = "3";
+        if ($request->has('limit')) {
+            $limit = $request->limit;
+        }
+
         // Filter: Genre
         if ($request->has('genre_ids')) {
             $query->whereHas('genres', function ($q) use ($request) {
@@ -40,7 +45,7 @@ class ConcertController extends Controller
         }
 
         // Pagination
-        $perPage = $request->get('limit', 10);
+        $perPage = $request->get('limit', $limit);
         $concerts = $query->paginate($perPage);
 
         return response()->json([
