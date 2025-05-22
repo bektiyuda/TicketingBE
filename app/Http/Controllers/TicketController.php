@@ -7,9 +7,14 @@ use Illuminate\Http\Request;
 
 class TicketController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $tickets = Ticket::with('concert')->get();
+        $query = Ticket::with('concert');
+        if ($request->has('concert_id')) {
+            $query->where('concert_id', $request->concert_id);
+        }
+
+        $tickets = $query->get();
 
         return response()->json([
             'status' => 'success',
