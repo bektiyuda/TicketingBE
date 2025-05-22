@@ -48,6 +48,17 @@ class ConcertController extends Controller
         $perPage = $request->get('limit', $limit);
         $concerts = $query->paginate($perPage);
 
+        // Transformasi koleksi untuk menambahkan min_price dan max_price
+        $transformed = $concerts->map(function ($concert) {
+            $prices = $concert->tickets->pluck('price');
+            $concert->min_price = $prices->min();
+            $concert->max_price = $prices->max();
+            return $concert;
+        });
+
+        // Ganti collection bawaan dengan yang sudah ditransformasi
+        $concerts->setCollection($transformed);
+
         return response()->json([
             'status' => 'success',
             'data' => $concerts
