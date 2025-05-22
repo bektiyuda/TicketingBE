@@ -81,6 +81,8 @@ class TicketOrderController extends Controller
             $totalAmount += $ticket->price * $item['quantity'];
         }
 
+        $totalAmount = $totalAmount * 1.025;
+
         $params = [
             'transaction_details' => [
                 'order_id' => 'ORDER-' . $orderDetail->id,

@@ -18,18 +18,18 @@ class OrderDetailController extends Controller
     }
 
     public function me(Request $request)
-{
-    $user = $request->user;
+    {
+        $user = $request->user;
 
-    $orders = OrderDetail::with(['ticketOrders.ticket'])
-        ->where('user_id', $user->id)
-        ->get();
+        $orders = OrderDetail::with(['ticketOrders.ticket'])
+            ->where('user_id', $user->id)
+            ->get();
 
-    return response()->json([
-        'status' => 'success',
-        'data' => $orders
-    ]);
-}
+        return response()->json([
+            'status' => 'success',
+            'data' => $orders
+        ]);
+    }
 
 
     public function show($id)
