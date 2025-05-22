@@ -6,6 +6,7 @@ use App\Models\Concert;
 use App\Models\Genre;
 use Illuminate\Http\Request;
 use App\Services\SupabaseService;
+use Carbon\Carbon;
 
 class ConcertController extends Controller
 {
@@ -42,6 +43,11 @@ class ConcertController extends Controller
             $query->whereHas('tickets', function ($q) use ($request) {
                 $q->whereBetween('price', [$request->min_price, $request->max_price]);
             });
+        }
+
+        if ($request->has("upcoming") && $request->upcoming == 1) {
+            $nextYear = Carbon::now()->addYear()->year;
+            $query->whereYear('concert_start', $nextYear);
         }
 
         // Pagination
