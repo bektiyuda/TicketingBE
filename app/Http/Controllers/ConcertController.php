@@ -64,6 +64,12 @@ class ConcertController extends Controller
             $query->whereBetween('concert_start', [$startOfWeek, $endOfWeek]);
         }
 
+        // Filter : Concerts Today
+        if ($request->has('today') && $request->today == 1) {
+            $today = Carbon::now()->format('Y-m-d');
+            $query->whereDate('concert_start', $today);
+        }
+
         // Pagination
         $perPage = $request->get('limit', $limit);
         $concerts = $query->paginate($perPage);
