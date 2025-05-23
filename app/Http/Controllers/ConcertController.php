@@ -58,18 +58,10 @@ class ConcertController extends Controller
         }
 
         // Filter : This Week
-        if ($request->has('this_week')) {
+        if ($request->has('this_week') && $request->this_week == 1) {
             $startOfWeek = Carbon::now()->startOfWeek();
             $endOfWeek = Carbon::now()->endOfWeek();
-
-            if ($request->this_week == 1) {
-                $query->whereBetween('concert_start', [$startOfWeek, $endOfWeek]);
-            } else {
-                $query->where(function ($q) use ($startOfWeek, $endOfWeek) {
-                    $q->where('concert_start', '<', $startOfWeek)
-                        ->orWhere('concert_start', '>', $endOfWeek);
-                });
-            }
+            $query->whereBetween('concert_start', [$startOfWeek, $endOfWeek]);
         }
 
         // Pagination
