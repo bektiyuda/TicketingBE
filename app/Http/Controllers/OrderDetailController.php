@@ -19,31 +19,32 @@ class OrderDetailController extends Controller
     }
 
     public function me(Request $request)
-    {
-        $user = $request->user;
-        $now = Carbon::now();
+{
+    $user = $request->user;
+    $now = Carbon::now();
 
-        $orders = OrderDetail::with(['ticketOrders.ticket.concert'])
-            ->where('user_id', $user->id);
+    $orders = OrderDetail::with(['ticketOrders.ticket.concert'])
+        ->where('user_id', $user->id);
 
-        if ($request->has('past')) {
-            $isPast = $request->query('past');
-            $orders = $orders->whereHas('ticketOrders.ticket.concert', function ($query) use ($isPast, $now) {
-                if ($isPast == 1) {
-                    $query->where('concert_end', '<', $now);
-                } else {
-                    $query->where('concert_end', '>=', $now);
-                }
-            });
-        }
-
-        $orders = $orders->get();
-
-        return response()->json([
-            'status' => 'success',
-            'data' => $orders
-        ]);
+    if ($request->has('past')) {
+        $isPast = $request->query('past');
+        $orders = $orders->whereHas('ticketOrders.ticket.concert', function ($query) use ($isPast, $now) {
+            if ($isPast == 1) {
+                $query->where('concert_end', '<', $now);
+            } else {
+                $query->where('concert_end', '>=', $now);
+            }
+        });
     }
+
+    $limit = $request->get('limit', 3);
+    $orders = $orders->paginate($limit);
+
+    return response()->json([
+        'status' => 'success',
+        'data' => $orders
+    ]);
+}
 
 
     public function show($id)
