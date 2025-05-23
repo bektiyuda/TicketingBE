@@ -70,6 +70,17 @@ class ConcertController extends Controller
             $query->whereDate('concert_start', $today);
         }
 
+        // Filter: Search
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%$search%")
+                    ->orWhereHas('venue', function ($q) use ($search) {
+                        $q->where('name', 'like', "%$search%");
+                    });
+            });
+        }
+
         // Pagination
         $perPage = $request->get('limit', $limit);
         $concerts = $query->paginate($perPage);
