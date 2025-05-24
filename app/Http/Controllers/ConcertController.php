@@ -57,6 +57,30 @@ class ConcertController extends Controller
             }])->orderByDesc('total_sold');
         }
 
+        // Filter : This Week
+        if ($request->has('this_week') && $request->this_week == 1) {
+            $startOfWeek = Carbon::now()->startOfWeek();
+            $endOfWeek = Carbon::now()->endOfWeek();
+            $query->whereBetween('concert_start', [$startOfWeek, $endOfWeek]);
+        }
+
+        // Filter : Concerts Today
+        if ($request->has('today') && $request->today == 1) {
+            $today = Carbon::now()->format('Y-m-d');
+            $query->whereDate('concert_start', $today);
+        }
+
+        // Filter: Search
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%$search%")
+                    ->orWhereHas('venue', function ($q) use ($search) {
+                        $q->where('name', 'like', "%$search%");
+                    });
+            });
+        }
+
         // Pagination
         $perPage = $request->get('limit', $limit);
         $concerts = $query->paginate($perPage);
