@@ -60,6 +60,8 @@ $app->singleton(
 */
 
 $app->configure('app');
+$app->configure('services');
+$app->configure('view');
 
 /*
 |--------------------------------------------------------------------------
@@ -101,6 +103,8 @@ $app->routeMiddleware([
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 $app->register(Illuminate\Database\MigrationServiceProvider::class);
+$app->register(Laravel\Socialite\SocialiteServiceProvider::class);
+$app->register(Illuminate\View\ViewServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------
