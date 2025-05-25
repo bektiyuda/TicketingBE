@@ -27,7 +27,7 @@ class GenresTableSeeder extends Seeder
 {
     public function run(): void
     {
-        $genres = ['Today', 'This Weekend', 'Trending', 'Pop', 'Rock', 'Emo', 'Jazz', 'Metal', 'Indie', 'Alternative', 'Hip-Hop', 'R&B', 'Reggae'];
+        $genres = ['Today', 'This Week', 'Trending', 'Pop', 'Rock', 'Emo', 'Jazz', 'Metal', 'Indie', 'Alternative', 'Hip-Hop', 'R&B', 'Reggae'];
         foreach ($genres as $genre) {
             DB::table('genres')->insert([
                 'name' => $genre
