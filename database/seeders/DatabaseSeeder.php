@@ -244,7 +244,7 @@ class TicketsTableSeeder extends Seeder
 {
     public function run(): void
     {
-        $concerts = DB::table('concerts')->pluck('id', 'name');
+        $concerts = DB::table('concerts')->get()->keyBy('name');
 
         $tickets = [
             'Synchronize Fest 2024' => [
@@ -316,17 +316,17 @@ class TicketsTableSeeder extends Seeder
         ];
 
         foreach ($tickets as $concertName => $ticketOptions) {
-            $concertId = $concerts[$concertName] ?? null;
+            $concert = $concerts[$concertName] ?? null;
 
-            if ($concertId) {
+            if ($concert) {
                 foreach ($ticketOptions as $ticket) {
                     DB::table('tickets')->insert([
-                        'concert_id' => $concertId,
+                        'concert_id' => $concert->id,
                         'name' => $ticket['name'],
                         'price' => $ticket['price'],
                         'quota' => $ticket['quota'],
-                        'sales_start' => Carbon::now()->subDays(10),
-                        'sales_end' => Carbon::now()->addDays(30),
+                        'sales_start' => Carbon::parse($concert->concert_start)->subDays(14),
+                        'sales_end' => Carbon::parse($concert->concert_start)->subDay(),
                     ]);
                 }
             }
