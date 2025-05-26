@@ -81,7 +81,7 @@ class AuthController extends Controller
                 'is_admin' => false
             ]
         );
-        
+
         $payload = [
             'iss' => "lumen-jwt",
             'sub' => $user->id,
@@ -90,11 +90,7 @@ class AuthController extends Controller
         ];
 
         $token = JWT::encode($payload, $this->key, 'HS256');
-
-        return response()->json([
-            'message' => 'Google login successful',
-            'token' => $token,
-            'user' => $user
-        ]);
+        
+        return response('', 302, ['Location' => 'http://localhost:5173/oauth/callback?token=' . $token]);
     }
 }
