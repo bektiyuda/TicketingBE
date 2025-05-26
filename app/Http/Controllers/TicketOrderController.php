@@ -85,7 +85,7 @@ class TicketOrderController extends Controller
 
         $params = [
             'transaction_details' => [
-                'order_id' => 'ORDER-' . $orderDetail->id,
+                'order_id' => 'ORDER-' . $orderDetail->id . '-' . uniqid(),
                 'gross_amount' => $totalAmount,
             ],
             'customer_details' => [

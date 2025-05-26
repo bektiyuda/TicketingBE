@@ -31,7 +31,7 @@ $router->group(['prefix' => 'concerts'], function () use ($router) {
     $router->get('/{id}', 'ConcertController@show');
 });
 
-$router->group(['prefix' => 'concerts', 'middleware' => ['auth', 'admin']], function () use ($router) {
+$router->group(['prefix' => 'concerts'], function () use ($router) {
     $router->post('/', 'ConcertController@store');
     $router->put('/{id}', 'ConcertController@update');
     $router->delete('/{id}', 'ConcertController@destroy');

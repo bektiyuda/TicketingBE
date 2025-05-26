@@ -127,17 +127,17 @@ class ConcertController extends Controller
             'concert_start' => 'required|date',
             'concert_end' => 'required|date',
             'venue_id' => 'required|integer',
-            'link_poster' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'link_poster' => 'required|image|mimes:jpg,jpeg,png|max:2048',
             'link_venue' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'genre_ids' => 'required|array',
         ]);
 
-        $linkposter = null;
+        $linkPoster = null;
         if ($request->hasFile('link_poster')) {
             $linkPoster = $supabase->upload($request->file('link_poster'), 'posters');
         }
 
-        $linkvenue = null;
+        $linkVenue = null;
         if ($request->hasFile('link_venue')) {
             $linkVenue = $supabase->upload($request->file('link_venue'), 'venues');
         }
@@ -151,6 +151,7 @@ class ConcertController extends Controller
             'link_poster' => $linkPoster,
             'link_venue' => $linkVenue,
         ]);
+
 
         $concert->genres()->attach($request->genre_ids);
 
